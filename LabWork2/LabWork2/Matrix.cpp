@@ -18,7 +18,6 @@ public:
 	~BoolMatrix();
 	int getNrow();
 	int getNcol();
-	bool** getElements();
 	void setElement(int irow, int icol, bool element);
 	bool getElement(int irow, int icol);
 	void print(ostream & out);
@@ -65,6 +64,7 @@ BoolMatrix :: ~BoolMatrix()
 		delete [] elements[i];
 	}
 	delete [] elements;
+	elements = 0;
 }
 
 int BoolMatrix :: getNrow()
@@ -75,11 +75,6 @@ int BoolMatrix :: getNrow()
 int BoolMatrix :: getNcol()
 {
 	return ncol;
-}
-
-bool** BoolMatrix :: getElements()
-{
-	return elements;
 }
 
 void BoolMatrix :: setElement(int irow, int icol, bool element)
@@ -105,7 +100,7 @@ void BoolMatrix :: print(ostream & out)
 
 void BoolMatrix :: read(istream & in)
 {
-    if (elements)
+    if(elements)
 	{
 	    for(int i = 0; i < nrow; i++)
 		{
@@ -114,6 +109,7 @@ void BoolMatrix :: read(istream & in)
 			delete [] elements[i];
 		}
 		delete [] elements;
+		elements = 0;
 	}
 
 	in >> nrow;
@@ -130,10 +126,7 @@ void BoolMatrix :: read(istream & in)
 BoolMatrix BoolMatrix :: disjunction(BoolMatrix matrix)
 {
 	if(nrow != matrix.nrow || ncol != matrix.ncol)
-	{
-		BoolMatrix empty;
-		return empty;
-	}
+		return BoolMatrix();
 	
 	BoolMatrix temp(nrow, ncol);
 	for(int i = 0; i < nrow; i++)
@@ -145,10 +138,7 @@ BoolMatrix BoolMatrix :: disjunction(BoolMatrix matrix)
 BoolMatrix BoolMatrix :: conjunction(BoolMatrix matrix)
 {
 	if(nrow != matrix.nrow || ncol != matrix.ncol)
-	{
-		BoolMatrix empty;
-		return empty;
-	}
+		return BoolMatrix();
 	
 	BoolMatrix temp(nrow, ncol);
 	for(int i = 0; i < nrow; i++)
@@ -176,6 +166,7 @@ BoolMatrix & BoolMatrix :: operator = (const BoolMatrix & matrix)
 				elements[i][j] = 0;
 			delete [] elements[i];
 		}
+		elements = 0;
 		delete [] elements;
 
 		nrow = matrix.nrow;

@@ -4,9 +4,9 @@ using namespace std;
 
 struct Node
 {
-	int value;
+    int value;
     int count;
-	Node *right, *left;
+    Node *right, *left;
 };
 
 class MultiSet
@@ -19,7 +19,8 @@ class MultiSet
     Node *find(Node *&node, int value);
     void print(Node *&node, int level);
     void addTree(Node *&node);
-    void intersect(Node* node, int value, int count);
+    void intersect(Node* node, MultiSet &result, MultiSet &set, int &count);
+    void difference(Node* node, MultiSet &result, MultiSet &set, int &count);
 public:
     MultiSet(){ root = NULL; }
     MultiSet(const MultiSet &set);
@@ -29,7 +30,8 @@ public:
     int find(int value);
     void print();
     MultiSet add(MultiSet set);
-    void intersect(MultiSet set, MultiSet &result);
+    MultiSet intersect(MultiSet set);
+    MultiSet difference(MultiSet set);
 };
 
 MultiSet :: MultiSet(const MultiSet &set)
@@ -87,29 +89,24 @@ MultiSet& MultiSet :: operator =(const MultiSet &set)
 
 void MultiSet :: push(int value)
 {
-    if (!root) 
-    {
-        root = createNode(value, 1);
-        return;
-    } 
-    
     push(root, value, 1);
 }
 
 void MultiSet :: push(Node *&node, int value, int count) 
 {
+
+    if (!node) 
+    {
+        node = createNode(value, 1);
+        return;
+    } 
+
     if (node -> value == value)
         node -> count += count;
     else if (node -> value > value)
-        if (!node -> left)
-            node -> left = createNode(value, count);
-        else
-            push(node -> left, value, count);
-    else 
-        if (!node -> right)
-            node -> right = createNode(value, count);
-        else
-            push(node -> right, value, count);
+        push(node -> left, value, count);
+    else
+        push(node -> right, value, count);
 }
 
 int MultiSet :: find(int value)
@@ -125,7 +122,7 @@ Node* MultiSet :: find(Node *&node, int value)
 
     if (node -> value == value)
         return node;
-    
+
     if (node -> value > value)
         return find(node -> left, value);
 
@@ -139,7 +136,7 @@ void MultiSet :: print()
 
 void MultiSet :: print(Node *&node, int level)
 {
-    
+
     for (int i = 0; i < level - 1; i++)
         cout << "|      ";
     if (level > 0)
@@ -149,7 +146,7 @@ void MultiSet :: print(Node *&node, int level)
         cout << "null" << endl;
         return;
     }
-    
+
     cout << node -> value << ":" << node -> count << endl;
 
     print(node -> left, level + 1);
@@ -173,32 +170,50 @@ MultiSet MultiSet :: add(MultiSet set)
     return result;
 }
 
-void MultiSet :: intersect(Node* node, int value, int count)
+void MultiSet :: intersect(Node* node, MultiSet &result, MultiSet &set, int &count)
 {
-    if (!node)
-    {
-        createNode(value, count);
+    if (!node) 
         return;
-    }
-
-    if (value <= node -> value)
-        intersect(node -> left, value, count);
-    else
-        intersect(node -> right, value, count);
+    count = set.find(node -> value);
+    if (count)
+        result.push(result.root, node -> value, (count < node -> count) ? count : node -> count);
+    intersect(node -> left, result, set, count);
+    intersect(node -> right, result, set, count);
 }
 
-void MultiSet :: intersect(MultiSet set, MultiSet &result)
+MultiSet MultiSet :: intersect(MultiSet set)
 {
+    MultiSet result;
     int count;
+    intersect(root, result, set, count);
+    return result;
+}
 
+void MultiSet :: difference(Node* node, MultiSet &result, MultiSet &set, int &count)
+{
+    if (!node) 
+        return;
+    count = node -> count - set.find(node -> value);
+    if (count > 0)
+        result.push(result.root, node -> value, count);
+    difference(node -> left, result, set, count);
+    difference(node -> right, result, set, count);
+}
+
+MultiSet MultiSet :: difference(MultiSet set)
+{
+    MultiSet result;
+    int count;
+    difference(root, result, set, count);
+    return result;
 }
 
 int main()
 {
-    
-    
+
+
     MultiSet set1, set2;
-    
+
     int n = 11, elements[] = {10, 12, 9, 10, 15, 16, 3, 14, 16, 9, 9};
     for (int i = 0; i < n; i++)
     {
@@ -212,7 +227,7 @@ int main()
     set1.print();
     set2.print();
 
-    MultiSet result = set1.add(set2);
+    MultiSet result = set1.difference(set2);
     result.print();
 
     cout << set1.find(9) << endl;
