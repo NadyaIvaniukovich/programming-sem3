@@ -2,6 +2,7 @@
 **/ipch
 **/*.sdf
 **/*.sln
+**/*.suo
 **/*.txt
 **/*.vcxproj
 **/*.vcxproj.*
