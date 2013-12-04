@@ -49,7 +49,7 @@ void Triangle :: setVertexC(Point c)
     vertexC = c;
 }
 
-Shape* Triangle :: apply(Transformation & t)
+SharedPointer<Shape> Triangle :: apply(Transformation & t)
 {
-    return new Triangle(t.apply(vertexA),t.apply(vertexB),t.apply(vertexC));
+    return SharedPointer<Shape>(new Triangle(t.apply(vertexA),t.apply(vertexB),t.apply(vertexC)));
 }

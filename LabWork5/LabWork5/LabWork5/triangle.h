@@ -17,6 +17,6 @@ public:
     void setVertexB(Point);
     Point getVertexC();
     void setVertexC(Point);
-    Shape* apply(Transformation &);
+    SharedPointer<Shape> apply(Transformation &);
 };
 

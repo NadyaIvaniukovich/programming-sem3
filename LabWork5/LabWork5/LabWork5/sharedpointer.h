@@ -6,9 +6,9 @@ class SharedPointer
 {
     T* pointer;
     int count;
-    SharedPointer<T>(const SharedPointer<T> &);
-    SharedPointer<T> & operator =(const SharedPointer<T> &);
 public:
+    SharedPointer<T> & operator =(const SharedPointer<T> &);
+    SharedPointer<T>(const SharedPointer<T> &);
     SharedPointer();
     SharedPointer(T* pointer);    
     ~SharedPointer();

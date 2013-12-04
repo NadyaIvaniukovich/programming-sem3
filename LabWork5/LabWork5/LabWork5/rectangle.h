@@ -16,6 +16,6 @@ public:
     Point getVertexA();
     Point getVertexB();
     Point getVertexC();
-    Shape* apply(Transformation&);
+    SharedPointer<Shape> apply(Transformation&);
 };
 

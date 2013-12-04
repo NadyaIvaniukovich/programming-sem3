@@ -43,10 +43,10 @@ Point Rectangle :: getVertexC()
     return vertexC;
 }
 
-Shape* Rectangle :: apply(Transformation & t)
+SharedPointer<Shape> Rectangle :: apply(Transformation & t)
 {
     try {
-        return new Rectangle(t.apply(vertexA), t.apply(vertexB), t.apply(vertexC));
+        return SharedPointer<Shape>(new Rectangle(t.apply(vertexA), t.apply(vertexB), t.apply(vertexC)));
     }
     catch(IllegalArgumentException & e)
     {
